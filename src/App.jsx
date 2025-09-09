@@ -37,13 +37,21 @@ function App() {
           </div>
           <div className="flex flex-col  p-1">
             <h2 className="text-2xl font-bold text-[#d1d5e0] self-start ">{datas ? datas?.name : "Jawa"}</h2>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col relative mb-16">
               {datas ? <img src={`https://openweathermap.org/img/wn/${datas?.weather?.[0]?.icon}@2x.png`} alt="weather icon" className="self-center size-36" /> : <CloudSunIcon size={120} className="self-center text-white" />}
-              <div className="flex flex-col gap-1">
-                <p className="text-3xl font-bold text-slate-400 self-center">{datas?.weather?.[0]?.description || "Berkabut"}</p>
+              <div className="flex flex-col absolute right-28 top-32">
+                <p className="text-xl font-bold text-slate-400 self-center">{datas?.weather?.[0]?.main || "Berkabut"}</p>
                 <p className="text-2xl font-semibold text-slate-400 self-center"> {Math.floor(datas?.main?.temp) || "20"}°C</p>
               </div>
             </div>
+          </div>
+          <div className="flex flex-col  gap-2 px-3 py-2 bg-[#0b111d] rounded-lg text-white">
+            <p className="flex flex-row gap-3 font-semibold text-lg items-center">
+              Country : <span className="font-medium text-md text-slate-400">{datas.sys.country}</span>
+            </p>
+            <p className="flex flex-row gap-3 font-semibold text-lg items-center">
+              Humidity : <span className="font-medium text-md text-slate-400"> {datas.main.humidity}%</span>
+            </p>
           </div>
         </div>
       </div>
