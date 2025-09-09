@@ -1,26 +1,31 @@
 import { CloudSunIcon } from "@phosphor-icons/react";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   const searchInput = useRef();
   let [datas, setDatas] = useState(null);
   const handleSearch = (event) => {
     if (event.key === "Enter" || event.type === "click") {
       event.preventDefault();
-      const city = searchInput.current.value;
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${import.meta.env.VITE_WEATHER_API}&units=metric`;
-      fetch(url).then((res) => {
-        if (!res.ok) {
-          console.log("gagal");
-        }
-        return res.json().then((data) => {
-          console.log(data);
-          setDatas(data);
-          console.log("🚀 ~ handleSearch ~ setDatas:", setDatas);
+      if (searchInput.current.value === "") {
+        toast.error("This field can’t be empty 🙂");
+      } else {
+        const city = searchInput.current.value.trim();
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${import.meta.env.VITE_WEATHER_API}&units=metric`;
+        fetch(url).then((res) => {
+          if (!res.ok) {
+            console.log(res.json());
+          }
+          return res.json().then((data) => {
+            console.log(data);
+            setDatas(data);
+            console.log("🚀 ~ handleSearch ~ setDatas:", setDatas);
+          });
         });
-      });
-      searchInput.current.value = "";
+        searchInput.current.value = "";
+      }
     }
   };
 
@@ -41,19 +46,20 @@ function App() {
               {datas ? <img src={`https://openweathermap.org/img/wn/${datas?.weather?.[0]?.icon}@2x.png`} alt="weather icon" className="self-center size-36" /> : <CloudSunIcon size={120} className="self-center text-white" />}
               <div className="flex flex-col absolute right-28 top-32">
                 <p className="text-xl font-bold text-slate-400 self-center">{datas?.weather?.[0]?.main || "Berkabut"}</p>
-                <p className="text-2xl font-semibold text-slate-400 self-center"> {Math.floor(datas?.main?.temp) || "20"}°C</p>
+                <p className="text-2xl font-semibold text-slate-400 self-center"> {datas ? Math.floor(datas?.main?.temp) : "20"}°C</p>
               </div>
             </div>
           </div>
           <div className="flex flex-col  gap-2 px-3 py-2 bg-[#0b111d] rounded-lg text-white">
             <p className="flex flex-row gap-3 font-semibold text-lg items-center">
-              Country : <span className="font-medium text-md text-slate-400">{datas.sys.country}</span>
+              Country : <span className="font-medium text-md text-slate-400">{datas ? datas.sys.country : "ID"}</span>
             </p>
             <p className="flex flex-row gap-3 font-semibold text-lg items-center">
-              Humidity : <span className="font-medium text-md text-slate-400"> {datas.main.humidity}%</span>
+              Humidity : <span className="font-medium text-md text-slate-400"> {datas ? datas.main.humidity : "100"}%</span>
             </p>
           </div>
         </div>
+        <ToastContainer position="top-right" autoClose={3000} />
       </div>
     </>
   );
